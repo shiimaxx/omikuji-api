@@ -8,6 +8,23 @@ import (
 	"time"
 )
 
+func newYear(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		t := time.Now()
+		if t.Month() == time.January && t.Day() >= 1 && t.Day() <= 3 {
+			v := struct {
+				Result string `json:"result"`
+			}{
+				Result: "daikichi",
+			}
+			if err := json.NewEncoder(w).Encode(v); err != nil {
+				log.Println("error:", err)
+			}
+			return
+		}
+	}
+}
+
 // HandleOmikujiAPI omikuji api
 func HandleOmikujiAPI(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
@@ -34,6 +51,6 @@ func HandleOmikujiAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", HandleOmikujiAPI)
+	http.HandleFunc("/", newYear(HandleOmikujiAPI))
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
