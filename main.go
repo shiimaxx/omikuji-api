@@ -17,8 +17,12 @@ type OmikujiResponse struct {
 	Result     string `json:"result"`
 }
 
+var getTime = func() time.Time {
+	return time.Now()
+}
+
 func omikuji() (int, string) {
-	t := time.Now()
+	t := getTime()
 	if t.Month() == time.January && t.Day() >= 1 && t.Day() <= 3 {
 		return 0, "daikichi"
 	}
