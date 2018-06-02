@@ -80,7 +80,6 @@ func main() {
 	flags.IntVar(&port, "p", DefaultPort, "port number(Short)")
 	flags.BoolVar(&version, "version", false, "print version information")
 	if err := flags.Parse(os.Args[1:]); err != nil {
-		logger.Println(err)
 		os.Exit(ExitCodeError)
 	}
 
