@@ -6,10 +6,19 @@ import (
 	"math/rand"
 	"net/http"
 	"time"
+	"flag"
+	"fmt"
+	"os"
 )
 
-// DefaultPort default for http server listen port
-const DefaultPort = ":8080"
+
+const (
+	// Exit codes are int values that represent an exit code for a particular error.
+	ExitCodeOK    int = 0
+	ExitCodeError int = 1 + iota
+	// DefaultPort default for http server listen port
+ 	DefaultPort = 8080
+)
 
 // OmikujiResponse omikuji-api response
 type OmikujiResponse struct {
@@ -56,7 +65,24 @@ func HandleOmikujiAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	port := DefaultPort
+	var (
+		port    int
+		version bool
+	)
+
+	flags := flag.NewFlagSet(Name, flag.ContinueOnError)
+	flags.IntVar(&port, "port", DefaultPort, "port number")
+	flags.IntVar(&port, "p", DefaultPort, "port number(Short)")
+	flags.BoolVar(&version, "version", false, "print version information")
+	if err := flags.Parse(os.Args[1:]); err != nil {
+		os.Exit(ExitCodeError)
+	}
+
+	if version {
+		fmt.Printf("%s version %s\n", Name, Version)
+		os.Exit(ExitCodeOK)
+	}
+
 	http.HandleFunc("/", HandleOmikujiAPI)
-	log.Fatal(http.ListenAndServe(port, nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
